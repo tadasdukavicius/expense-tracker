@@ -1,5 +1,11 @@
+.env
 .env.*
 !.env.example
+*.csv
+!backend/src/test/resources/sample-statement.csv
+target/
+node_modules/
+.idea/
 .angular/
 dist/
 *.log
