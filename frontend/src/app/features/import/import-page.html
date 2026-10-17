@@ -1,0 +1,121 @@
+<main class="page">
+  <header>
+    <p class="eyebrow">Bring in your activity</p>
+    <h1>Import statement</h1>
+    <p class="subtitle">Upload a CSV, review duplicates, then confirm.</p>
+  </header>
+
+  @if (errorMessage) {
+    <p class="error" role="alert">{{ errorMessage }}</p>
+  }
+
+  <section class="account-card">
+    <h2>Accounts</h2>
+
+    @if (accounts.length > 0) {
+      <mat-form-field appearance="outline" class="account-select">
+        <mat-label>Account for this statement</mat-label>
+        <mat-select [value]="accountForm.controls.accountId.value"
+                    (selectionChange)="accountForm.controls.accountId.setValue($event.value)">
+          @for (account of accounts; track account.id) {
+            <mat-option [value]="account.id">{{ account.name }} ({{ account.currency }})</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    } @else if (!loadingAccounts) {
+      <p>No accounts yet. Create one before importing.</p>
+    }
+
+    <form class="new-account" [formGroup]="newAccountForm" (ngSubmit)="createAccount()">
+      <mat-form-field appearance="outline">
+        <mat-label>New account name</mat-label>
+        <input matInput formControlName="name" placeholder="e.g. Main account">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Currency</mat-label>
+        <input matInput formControlName="currency" maxlength="3" placeholder="EUR">
+      </mat-form-field>
+
+      <button mat-button type="submit" [disabled]="creatingAccount || newAccountForm.invalid">
+        Create account
+      </button>
+    </form>
+  </section>
+
+  <mat-stepper linear #stepper>
+    <mat-step [stepControl]="accountForm">
+      <ng-template matStepLabel>Upload</ng-template>
+
+      <div class="step-content">
+        <p>Select a CSV statement file. Use a fabricated sample while developing.</p>
+
+        <label class="file-picker">
+          <span>Statement CSV</span>
+          <input type="file" accept=".csv,text/csv" (change)="onFileSelected($event)">
+        </label>
+
+        @if (selectedFile) {
+          <p class="file-name">Selected: {{ selectedFile.name }}</p>
+        }
+
+        <button mat-flat-button type="button"
+                [disabled]="uploading || !selectedFile || accountForm.invalid"
+                (click)="uploadForPreview()">
+          Upload and preview
+        </button>
+      </div>
+    </mat-step>
+
+    <mat-step>
+      <ng-template matStepLabel>Preview</ng-template>
+
+      @if (preview; as data) {
+        <div class="preview-summary">
+          <div><strong>{{ data.totalRows }}</strong><span>Rows</span></div>
+          <div><strong>{{ data.newCount }}</strong><span>New</span></div>
+          <div><strong>{{ data.duplicateCount }}</strong><span>Duplicates</span></div>
+        </div>
+
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Merchant</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of data.rows; track row.rowNumber) {
+                <tr [class.duplicate]="row.duplicate">
+                  <td>{{ row.bookingDate | date:'mediumDate' }}</td>
+                  <td>{{ row.description }}</td>
+                  <td>{{ row.counterparty || '—' }}</td>
+                  <td>{{ row.amount | currency:row.currency:'symbol':'1.2-2' }}</td>
+                  <td>{{ row.duplicate ? 'Duplicate — skipped' : 'New' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        @if (!result) {
+          <div class="step-actions">
+            <button mat-button type="button" matStepperPrevious>Back</button>
+            <button mat-flat-button type="button" [disabled]="confirming" (click)="confirmImport()">
+              Confirm import
+            </button>
+          </div>
+        } @else {
+          <div class="success" role="status">
+            Imported {{ result.importedCount }} transactions; skipped {{ result.skippedCount }} duplicates.
+          </div>
+          <button mat-flat-button type="button" (click)="startOver()">Import another statement</button>
+        }
+      }
+    </mat-step>
+  </mat-stepper>
+</main>

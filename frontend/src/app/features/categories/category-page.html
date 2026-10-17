@@ -1,0 +1,54 @@
+<main class="page">
+  <header>
+    <p class="eyebrow">Organize your spending</p>
+    <h1>Categories</h1>
+    <p class="subtitle">Create categories to classify your transactions.</p>
+  </header>
+
+  <section class="editor" aria-labelledby="editor-title">
+    <h2 id="editor-title">{{ editingId === null ? 'New category' : 'Edit category' }}</h2>
+
+    <form [formGroup]="form" (ngSubmit)="save()">
+      <mat-form-field appearance="outline">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" maxlength="100">
+        @if (form.controls.name.touched && form.controls.name.hasError('required')) {
+          <mat-error>Enter a category name.</mat-error>
+        }
+        @if (form.controls.name.touched && form.controls.name.hasError('maxlength')) {
+          <mat-error>Name must be 100 characters or fewer.</mat-error>
+        }
+      </mat-form-field>
+
+      <label class="color-field">
+        <span>Color</span>
+        <input type="color" formControlName="color" aria-label="Category color">
+      </label>
+
+      <div class="actions">
+        <button mat-flat-button type="submit" [disabled]="saving || form.invalid">
+          {{ editingId === null ? 'Add category' : 'Save changes' }}
+        </button>
+        @if (editingId !== null) {
+          <button mat-button type="button" (click)="cancelEdit()">Cancel</button>
+        }
+      </div>
+    </form>
+  </section>
+
+  @if (errorMessage) {
+    <p class="error" role="alert">{{ errorMessage }}</p>
+  }
+
+  <section class="category-list" aria-label="Existing categories">
+    @for (category of categories; track category.id) {
+      <article class="category-row">
+        <span class="swatch" [style.backgroundColor]="category.color || '#9e9e9e'"></span>
+        <span class="category-name">{{ category.name }}</span>
+        <span class="color-code">{{ category.color || 'No color' }}</span>
+        <button mat-button type="button" (click)="edit(category)">Edit</button>
+        <button mat-button type="button" (click)="deleteCategory(category.id)">Delete</button>
+      </article>
+    }
+  </section>
+</main>

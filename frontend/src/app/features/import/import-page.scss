@@ -1,0 +1,152 @@
+:host {
+  display: block;
+}
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 36px 28px;
+}
+
+header {
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: #58715f;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+}
+
+.subtitle {
+  color: #626b65;
+}
+
+.account-card,
+mat-stepper {
+  display: block;
+  margin-bottom: 20px;
+  padding: 20px;
+  border: 1px solid #e2e7e3;
+  border-radius: 12px;
+  background: white;
+}
+
+h2 {
+  margin-top: 0;
+  font-size: 1.1rem;
+}
+
+.account-select {
+  width: min(100%, 420px);
+}
+
+.new-account {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.new-account mat-form-field {
+  flex: 1 1 180px;
+}
+
+.step-content {
+  display: grid;
+  justify-items: start;
+  gap: 16px;
+  padding: 20px 0;
+}
+
+.file-picker {
+  display: grid;
+  gap: 8px;
+  color: #626b65;
+}
+
+.file-name {
+  margin: 0;
+}
+
+.preview-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.preview-summary div {
+  display: grid;
+  min-width: 100px;
+  gap: 4px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #f1f5f1;
+}
+
+.preview-summary strong {
+  font-size: 1.25rem;
+}
+
+.preview-summary span {
+  color: #626b65;
+  font-size: 0.85rem;
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 12px;
+  border-bottom: 1px solid #e2e7e3;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.duplicate {
+  color: #78817b;
+  background: #f2f3f2;
+}
+
+.step-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.success {
+  margin: 16px 0;
+  padding: 14px;
+  border-radius: 8px;
+  background: #eaf6ed;
+  color: #267347;
+}
+
+.error {
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: #fff0ef;
+  color: #922f2a;
+}
+
+@media (max-width: 560px) {
+  .page {
+    padding: 24px 16px;
+  }
+}
