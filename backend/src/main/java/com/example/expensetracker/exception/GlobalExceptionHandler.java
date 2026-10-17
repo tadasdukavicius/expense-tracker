@@ -5,6 +5,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.dao.DataIntegrityViolationException;
+
+
+import com.example.expensetracker.exception.NotFoundException;
+import com.example.expensetracker.exception.ConflictException;
+import com.example.expensetracker.exception.InvalidImportException;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -33,6 +39,21 @@ public class GlobalExceptionHandler {
         e.getBindingResult().getFieldErrors()
                 .forEach(f -> fields.put(f.getField(), f.getDefaultMessage()));
         return build(HttpStatus.BAD_REQUEST, "Validation failed", fields);
+    }
+
+    @ExceptionHandler(InvalidImportException.class)
+    ResponseEntity<ApiError> invalidImport(InvalidImportException e) {
+        return build(HttpStatus.BAD_REQUEST, e.getMessage(), Map.of());
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    ResponseEntity<ApiError> integrity(DataIntegrityViolationException e) {
+        return build(HttpStatus.CONFLICT, "Conflicting data, likely a duplicate transaction", Map.of());
+    }
+
+    @ExceptionHandler(org.springframework.web.multipart.MaxUploadSizeExceededException.class)
+    ResponseEntity<ApiError> tooLarge(org.springframework.web.multipart.MaxUploadSizeExceededException e) {
+        return build(HttpStatus.PAYLOAD_TOO_LARGE, "File is too large (max 5MB)", Map.of());
     }
 
     private ResponseEntity<ApiError> build(HttpStatus status, String message,

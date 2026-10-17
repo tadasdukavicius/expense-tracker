@@ -1,0 +1,16 @@
+booking_date;amount;currency;description;counterparty;reference
+2026-09-01;-8.45;EUR;Coffee;Coffee House;REF-1001
+2026-09-02;-42.18;EUR;Weekly groceries;Maxima;REF-1002
+2026-09-03;-2.50;EUR;Bus ticket;City Transit;REF-1003
+2026-09-04;-12.99;EUR;Music subscription;SoundStream;REF-1004
+2026-09-05;-36.00;EUR;Dinner;North Cafe;REF-1005
+2026-09-06;-64.20;EUR;Groceries;Rimi;REF-1006
+2026-09-07;-18.75;EUR;Pharmacy;Green Pharmacy;REF-1007
+2026-09-08;-29.90;EUR;Internet bill;FastNet;REF-1008
+2026-09-09;1850.00;EUR;Monthly salary;Example Employer;REF-1009
+2026-09-10;-7.20;EUR;Coffee;Coffee House;REF-1010
+2026-09-11;-54.32;EUR;Groceries;Maxima;REF-1011
+2026-09-12;-15.00;EUR;Taxi;Example Taxi;REF-1012
+2026-09-13;-22.40;EUR;Restaurant;Example Bistro;REF-1013
+2026-09-02;-42.18;EUR;Weekly groceries;Maxima;REF-1002
+2026-09-15;-11.60;EUR;Household items;Example Market;
