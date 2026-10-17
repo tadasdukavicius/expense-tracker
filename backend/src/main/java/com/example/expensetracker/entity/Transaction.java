@@ -45,4 +45,7 @@ public class Transaction {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
     private Account account;
+
+    @Column(name = "manually_categorized", nullable = false)
+    private Boolean manuallyCategorized = false;
 }

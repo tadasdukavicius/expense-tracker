@@ -6,6 +6,8 @@ import com.example.expensetracker.dto.TransactionResponse;
 import com.example.expensetracker.service.TransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import com.example.expensetracker.dto.RecategorizeResponse;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -43,5 +45,10 @@ public class TransactionController {
     public TransactionResponse changeCategory(@PathVariable Long id,
                                               @RequestBody CategoryChangeRequest r) {
         return service.changeCategory(id, r);
+    }
+
+    @PostMapping("/recategorize")
+    public RecategorizeResponse recategorize() {
+        return service.recategorize();
     }
 }

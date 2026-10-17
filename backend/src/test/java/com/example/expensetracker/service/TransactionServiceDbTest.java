@@ -1,6 +1,7 @@
 package com.example.expensetracker.service;
 
 import com.example.expensetracker.TestcontainersConfiguration;
+import com.example.expensetracker.categorization.RuleEngine;
 import com.example.expensetracker.dto.TransactionResponse;
 import com.example.expensetracker.entity.Category;
 import com.example.expensetracker.entity.Transaction;
@@ -20,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({TestcontainersConfiguration.class, TransactionService.class})
+@Import({TestcontainersConfiguration.class, TransactionService.class, RuleEngine.class})
 class TransactionServiceDbTest {
 
     @Autowired TransactionService service;

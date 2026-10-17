@@ -5,11 +5,20 @@ import com.example.expensetracker.dto.TransactionRequest;
 import com.example.expensetracker.dto.TransactionResponse;
 import com.example.expensetracker.entity.Category;
 import com.example.expensetracker.entity.Transaction;
+import com.example.expensetracker.entity.CategoryRule;
 import com.example.expensetracker.exception.NotFoundException;
 import com.example.expensetracker.mapper.Mapper;
 import com.example.expensetracker.repository.CategoryRepository;
 import com.example.expensetracker.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
+import com.example.expensetracker.dto.RecategorizeResponse;
+
+import com.example.expensetracker.categorization.RuleEngine;
+import com.example.expensetracker.repository.CategoryRuleRepository;
+
+import java.util.List;
+import java.util.Objects;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,6 +33,8 @@ public class TransactionService {
 
     private final TransactionRepository repo;
     private final CategoryRepository categoryRepo;
+    private final CategoryRuleRepository ruleRepo;
+    private final RuleEngine ruleEngine;
 
     @Transactional(readOnly = true)
     public Page<TransactionResponse> search(LocalDate from, LocalDate to, Long categoryId,
@@ -61,12 +72,30 @@ public class TransactionService {
     public TransactionResponse changeCategory(Long id, CategoryChangeRequest r) {
         Transaction t = repo.findById(id)
                 .orElseThrow(() -> new NotFoundException("Transaction not found: " + id));
-        t.setCategory(r.categoryId() == null ? null : findCategory(r.categoryId()));
+        Category category = r.categoryId() == null ? null : findCategory(r.categoryId());
+        t.setCategory(category);
+        t.setManuallyCategorized(category != null);
         return Mapper.toResponse(t);
     }
 
     private Category findCategory(Long id) {
         return categoryRepo.findById(id)
                 .orElseThrow(() -> new NotFoundException("Category not found: " + id));
+    }
+
+    @Transactional
+    public RecategorizeResponse recategorize() {
+        List<CategoryRule> rules = ruleRepo.findAllByOrderByPriorityAsc();
+        List<Transaction> candidates = repo.findAllByManuallyCategorizedFalse();
+        int updated = 0;
+        for (Transaction t : candidates) {
+            Category match = ruleEngine.categorize(t.getDescription(), t.getCounterparty(), rules)
+                    .orElse(null);
+            if (match != null && !Objects.equals(match.getId(), t.getCategory() == null ? null : t.getCategory().getId())) {
+                t.setCategory(match);
+                updated++;
+            }
+        }
+        return new RecategorizeResponse(candidates.size(), updated);
     }
 }

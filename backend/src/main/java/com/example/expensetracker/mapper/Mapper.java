@@ -1,6 +1,8 @@
 package com.example.expensetracker.mapper;
 
 import com.example.expensetracker.dto.CategoryResponse;
+import com.example.expensetracker.dto.CategoryRuleResponse;
+import com.example.expensetracker.entity.CategoryRule;
 import com.example.expensetracker.dto.TransactionResponse;
 import com.example.expensetracker.entity.Category;
 import com.example.expensetracker.entity.Transaction;
@@ -12,6 +14,11 @@ public final class Mapper {
 
     public static CategoryResponse toResponse(Category c) {
         return new CategoryResponse(c.getId(), c.getName(), c.getColor());
+    }
+
+    public static CategoryRuleResponse toResponse(CategoryRule r) {
+        return new CategoryRuleResponse(
+                r.getId(), r.getMatchField(), r.getPattern(), toResponse(r.getCategory()), r.getPriority());
     }
 
     public static TransactionResponse toResponse(Transaction t) {

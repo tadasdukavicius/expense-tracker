@@ -16,7 +16,11 @@ import com.example.expensetracker.dto.ImportResultResponse;
 import com.example.expensetracker.entity.ImportBatchStatus;
 import com.example.expensetracker.entity.Transaction;
 import com.example.expensetracker.exception.ConflictException;
+import com.example.expensetracker.categorization.RuleEngine;
+import com.example.expensetracker.repository.CategoryRuleRepository;
 import lombok.RequiredArgsConstructor;
+import com.example.expensetracker.entity.CategoryRule;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +40,8 @@ public class ImportService {
     private final TransactionRepository transactionRepository;
     private final List<StatementParser> parsers;
     private final DedupHasher dedupHasher;
+    private final CategoryRuleRepository ruleRepository;
+    private final RuleEngine ruleEngine;
 
     @Transactional
     public ImportPreviewResponse preview(Long accountId, MultipartFile file) {
@@ -143,6 +149,8 @@ public class ImportService {
         List<Transaction> toSave = new ArrayList<>();
         int skipped = 0;
 
+        List<CategoryRule> rules = ruleRepository.findAllByOrderByPriorityAsc();
+
         for (ImportBatchRow row : batch.getRows()) {
             // Re-check the database: another batch may have been confirmed since this preview.
             boolean duplicate = row.isDuplicate()
@@ -163,6 +171,8 @@ public class ImportService {
             t.setCounterparty(row.getCounterparty());
             t.setReference(row.getReference());
             t.setDedupHash(row.getDedupHash());
+            ruleEngine.categorize(row.getDescription(), row.getCounterparty(), rules)
+                    .ifPresent(t::setCategory);
             toSave.add(t);
         }
 
