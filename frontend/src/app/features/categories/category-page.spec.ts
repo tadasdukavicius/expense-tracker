@@ -5,7 +5,7 @@ import { CategoryPage } from './category-page';
 import { vi } from 'vitest';
 
 describe('CategoryPage', () => {
-  const groceries = { id: 1, name: 'Groceries', color: '#4caf50' };
+  const groceries = { id: 1, name: 'Groceries', color: '#4caf50', emoji: null };
   let categoryApi: {
     list: ReturnType<typeof vi.fn>;
     create: ReturnType<typeof vi.fn>;
@@ -44,12 +44,13 @@ describe('CategoryPage', () => {
     fixture.detectChanges();
 
     const page = fixture.componentInstance;
-    page.form.setValue({ name: 'Groceries', color: '#4caf50' });
+    page.form.setValue({ name: 'Groceries', color: '#4caf50', emoji: '' });
     page.save();
 
     expect(categoryApi.create).toHaveBeenCalledWith({
       name: 'Groceries',
       color: '#4caf50',
+      emoji: null,
     });
     expect(categoryApi.list).toHaveBeenCalledTimes(2);
     expect(page.categories).toEqual([groceries]);
@@ -59,7 +60,7 @@ describe('CategoryPage', () => {
     const fixture = TestBed.createComponent(CategoryPage);
     fixture.detectChanges();
 
-    fixture.componentInstance.form.setValue({ name: '', color: '#4caf50' });
+    fixture.componentInstance.form.setValue({ name: '', color: '#4caf50', emoji: '' });
     fixture.componentInstance.save();
 
     expect(categoryApi.create).not.toHaveBeenCalled();

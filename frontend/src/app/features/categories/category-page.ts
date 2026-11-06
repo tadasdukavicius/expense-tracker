@@ -7,6 +7,12 @@ import { MatInputModule } from '@angular/material/input';
 import { Category, CategoryRequest } from '../../core/models/api.models';
 import { CategoryService } from '../../core/services/category.service';
 
+export const EMOJI_CHOICES = [
+  '🛒', '🍔', '🍕', '☕', '🍺', '🔁', '📺', '🎬', '🎮', '🎵',
+  '⛽', '🚕', '🚌', '🚆', '✈️', '🚲', '💡', '🏠', '📱', '🌐',
+  '💊', '🏥', '🦷', '👕', '🎁', '🐶', '📚', '💼', '💰', '🧾',
+];
+
 @Component({
   selector: 'app-category-page',
   standalone: true,
@@ -20,6 +26,8 @@ import { CategoryService } from '../../core/services/category.service';
   styleUrl: './category-page.scss',
 })
 export class CategoryPage implements OnInit {
+  readonly emojis = EMOJI_CHOICES;
+
   private readonly categoryApi = inject(CategoryService);
   private readonly cdr = inject(ChangeDetectorRef);
 
@@ -32,6 +40,7 @@ export class CategoryPage implements OnInit {
       nonNullable: true,
       validators: [Validators.pattern(/^#[0-9a-fA-F]{6}$/)],
     }),
+    emoji: new FormControl('', { nonNullable: true }),
   });
 
   categories: Category[] = [];
@@ -44,6 +53,11 @@ export class CategoryPage implements OnInit {
     this.loadCategories();
   }
 
+  pickEmoji(emoji: string): void {
+    const control = this.form.controls.emoji;
+    control.setValue(control.value === emoji ? '' : emoji);
+  }
+
   save(): void {
     this.form.markAllAsTouched();
     if (this.form.invalid || this.saving) return;
@@ -51,6 +65,7 @@ export class CategoryPage implements OnInit {
     const request: CategoryRequest = {
       name: this.form.controls.name.value.trim(),
       color: this.form.controls.color.value,
+      emoji: this.form.controls.emoji.value || null,
     };
 
     this.saving = true;
@@ -78,13 +93,14 @@ export class CategoryPage implements OnInit {
     this.form.setValue({
       name: category.name,
       color: category.color ?? '#4caf50',
+      emoji: category.emoji ?? '',
     });
     this.errorMessage = '';
   }
 
   cancelEdit(): void {
     this.editingId = null;
-    this.form.reset({ name: '', color: '#4caf50' });
+    this.form.reset({ name: '', color: '#4caf50', emoji: '' });
     this.errorMessage = '';
   }
 

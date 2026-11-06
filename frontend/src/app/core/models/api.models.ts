@@ -2,11 +2,13 @@ export interface Category {
   id: number;
   name: string;
   color: string | null;
+  emoji: string | null;
 }
 
 export interface CategoryRequest {
   name: string;
   color: string | null;
+  emoji: string | null;
 }
 
 export interface Account {
@@ -68,4 +70,18 @@ export interface ImportResult {
 export interface AccountRequest {
   name: string;
   currency: string;
+}
+
+export interface CategorySpend {
+  categoryId: number | null;
+  name: string;
+  color: string;
+  emoji: string | null;
+  amount: number;
+  percent: number;
+}
+
+export interface CategoryStats {
+  total: number;
+  categories: CategorySpend[];
 }

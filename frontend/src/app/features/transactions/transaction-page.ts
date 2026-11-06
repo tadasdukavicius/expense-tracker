@@ -9,7 +9,8 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
-import { Category, Transaction } from '../../core/models/api.models';
+import { Account, Category, Transaction } from '../../core/models/api.models';
+import { AccountService } from '../../core/services/account.service';
 import { CategoryService } from '../../core/services/category.service';
 import { TransactionService } from '../../core/services/transaction.service';
 
@@ -34,18 +35,21 @@ import { TransactionService } from '../../core/services/transaction.service';
 export class TransactionsPage implements OnInit {
   private readonly transactionsApi = inject(TransactionService);
   private readonly categoriesApi = inject(CategoryService);
+  private readonly accountsApi = inject(AccountService);
 
   readonly filters = new FormGroup({
     from: new FormControl(''),
     to: new FormControl(''),
     categoryId: new FormControl<number | null>(null),
+    accountId: new FormControl<number | null>(null),
     text: new FormControl(''),
   });
 
-  readonly columns = ['bookingDate', 'description', 'counterparty', 'amount', 'category'];
+  readonly columns = ['bookingDate', 'counterparty', 'description', 'amount', 'category'];
 
   transactions: Transaction[] = [];
   categories: Category[] = [];
+  accounts: Account[] = [];
   totalElements = 0;
   pageIndex = 0;
   pageSize = 20;
@@ -55,6 +59,7 @@ export class TransactionsPage implements OnInit {
 
   ngOnInit(): void {
     this.loadCategories();
+    this.accountsApi.list().subscribe({ next: (accounts) => (this.accounts = accounts) });
     this.loadTransactions();
   }
 
@@ -64,7 +69,7 @@ export class TransactionsPage implements OnInit {
   }
 
   clearFilters(): void {
-    this.filters.reset({ from: '', to: '', categoryId: null, text: '' });
+    this.filters.reset({ from: '', to: '', categoryId: null, accountId: null, text: '' });
     this.pageIndex = 0;
     this.loadTransactions();
   }
@@ -118,6 +123,7 @@ export class TransactionsPage implements OnInit {
       from: filter.from || undefined,
       to: filter.to || undefined,
       categoryId: filter.categoryId ?? undefined,
+      accountId: filter.accountId ?? undefined,
       text: filter.text || undefined,
       page: this.pageIndex,
       size: this.pageSize,

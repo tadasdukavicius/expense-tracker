@@ -25,6 +25,16 @@
         <input type="color" formControlName="color" aria-label="Category color">
       </label>
 
+      <div class="emoji-picker" role="group" aria-label="Category emoji">
+        <span>Emoji</span>
+        @for (emoji of emojis; track emoji) {
+          <button type="button" class="emoji-btn"
+                  [class.selected]="form.controls.emoji.value === emoji"
+                  [attr.aria-pressed]="form.controls.emoji.value === emoji"
+                  (click)="pickEmoji(emoji)">{{ emoji }}</button>
+        }
+      </div>
+
       <div class="actions">
         <button mat-flat-button type="submit" [disabled]="saving || form.invalid">
           {{ editingId === null ? 'Add category' : 'Save changes' }}
@@ -44,6 +54,7 @@
     @for (category of categories; track category.id) {
       <article class="category-row">
         <span class="swatch" [style.backgroundColor]="category.color || '#9e9e9e'"></span>
+        <span class="emoji">{{ category.emoji }}</span>
         <span class="category-name">{{ category.name }}</span>
         <span class="color-code">{{ category.color || 'No color' }}</span>
         <button mat-button type="button" (click)="edit(category)">Edit</button>

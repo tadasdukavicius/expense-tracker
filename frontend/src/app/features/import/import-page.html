@@ -82,8 +82,8 @@
             <thead>
               <tr>
                 <th>Date</th>
-                <th>Description</th>
                 <th>Merchant</th>
+                <th>Description</th>
                 <th>Amount</th>
                 <th>Status</th>
               </tr>
@@ -92,8 +92,8 @@
               @for (row of data.rows; track row.rowNumber) {
                 <tr [class.duplicate]="row.duplicate">
                   <td>{{ row.bookingDate | date:'mediumDate' }}</td>
-                  <td>{{ row.description }}</td>
                   <td>{{ row.counterparty || '—' }}</td>
+                  <td class="desc" [attr.title]="row.description">{{ row.description }}</td>
                   <td>{{ row.amount | currency:row.currency:'symbol':'1.2-2' }}</td>
                   <td>{{ row.duplicate ? 'Duplicate — skipped' : 'New' }}</td>
                 </tr>

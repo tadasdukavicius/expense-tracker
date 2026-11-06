@@ -7,6 +7,7 @@ export interface TransactionQuery {
   from?: string;
   to?: string;
   categoryId?: number;
+  accountId?: number;
   text?: string;
   page: number;
   size: number;
@@ -27,6 +28,7 @@ export class TransactionService {
     if (query.from) params = params.set('from', query.from);
     if (query.to) params = params.set('to', query.to);
     if (query.categoryId != null) params = params.set('categoryId', query.categoryId);
+    if (query.accountId != null) params = params.set('accountId', query.accountId);
     if (query.text?.trim()) params = params.set('q', query.text.trim());
 
     return this.http.get<TransactionPage>(this.url, { params });
