@@ -30,9 +30,10 @@ public class TransactionController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false, name = "q") String text,
+            @RequestParam(required = false) Long accountId,
             @PageableDefault(size = 20, sort = "bookingDate", direction = org.springframework.data.domain.Sort.Direction.DESC)
             Pageable pageable) {
-        return service.search(from, to, categoryId, text, pageable);
+        return service.search(from, to, categoryId, text, accountId, pageable);
     }
 
     @PostMapping

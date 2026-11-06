@@ -38,7 +38,7 @@ public class TransactionService {
 
     @Transactional(readOnly = true)
     public Page<TransactionResponse> search(LocalDate from, LocalDate to, Long categoryId,
-                                            String text, Pageable pageable) {
+                                            String text, Long accountId, Pageable pageable) {
         Specification<Transaction> spec = (r, q, cb) -> cb.conjunction();
         if (from != null) {
             spec = spec.and((r, q, cb) -> cb.greaterThanOrEqualTo(r.get("bookingDate"), from));
@@ -48,6 +48,9 @@ public class TransactionService {
         }
         if (categoryId != null) {
             spec = spec.and((r, q, cb) -> cb.equal(r.get("category").get("id"), categoryId));
+        }
+        if (accountId != null) {
+            spec = spec.and((r, q, cb) -> cb.equal(r.get("account").get("id"), accountId));
         }
         if (text != null && !text.isBlank()) {
             String like = "%" + text.toLowerCase() + "%";

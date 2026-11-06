@@ -32,7 +32,7 @@ class TransactionServiceDbTest {
     @BeforeEach
     void setUp() {
         groceries = new Category();
-        groceries.setName("Groceries");
+        groceries.setName("Test Groceries");
         em.persist(groceries);
 
         em.persist(tx(LocalDate.of(2026, 9, 10), "-12.30", "MAXIMA LT", groceries));
@@ -79,7 +79,7 @@ class TransactionServiceDbTest {
     }
 
     private java.util.List<TransactionResponse> search(LocalDate from, LocalDate to, Long categoryId, String text) {
-        return service.search(from, to, categoryId, text, PageRequest.of(0, 10)).getContent();
+        return service.search(from, to, categoryId, text, null, PageRequest.of(0, 10)).getContent();
     }
 
     private Transaction tx(LocalDate date, String amount, String description, Category category) {
