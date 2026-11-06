@@ -30,6 +30,11 @@ public class SemicolonCsvStatementParser implements StatementParser {
     }
 
     @Override
+    public boolean recognizes(String firstLine) {
+        return firstLine.contains("booking_date");
+    }
+
+    @Override
     public List<ParsedTransaction> parse(InputStream input) throws IOException {
         CSVFormat format = CSVFormat.DEFAULT.builder()
                 .setDelimiter(';')

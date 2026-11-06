@@ -57,17 +57,25 @@ public class ImportService {
         String normalizedName = originalName.replace('\\', '/');
         final String fileName = normalizedName.substring(normalizedName.lastIndexOf('/') + 1);
 
+        final byte[] content;
+        try {
+            content = file.getBytes();
+        } catch (IOException e) {
+            throw new InvalidImportException("Could not read uploaded file", e);
+        }
+        String firstLine = new String(content, java.nio.charset.StandardCharsets.UTF_8).lines().findFirst().orElse("");
+
         StatementParser parser = parsers.stream()
-                .filter(candidate -> candidate.supports(fileName))
+                .filter(candidate -> candidate.supports(fileName) && candidate.recognizes(firstLine))
                 .findFirst()
-                .orElseThrow(() -> new InvalidImportException("Unsupported file type; upload a CSV"));
+                .orElseThrow(() -> new InvalidImportException("Unsupported file; upload a recognized bank CSV"));
 
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new NotFoundException("Account not found: " + accountId));
 
         final List<ParsedTransaction> parsedRows;
         try {
-            parsedRows = parser.parse(file.getInputStream());
+            parsedRows = parser.parse(new java.io.ByteArrayInputStream(content));
         } catch (IOException e) {
             throw new InvalidImportException("Could not parse statement: " + e.getMessage(), e);
         }

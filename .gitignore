@@ -3,6 +3,7 @@
 !.env.example
 *.csv
 !backend/src/test/resources/sample-statement.csv
+!backend/src/test/resources/sample-swedbank-lt.csv
 target/
 node_modules/
 .idea/

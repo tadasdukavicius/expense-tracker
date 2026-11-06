@@ -1,0 +1,6 @@
+Sąskaitos Nr.;;Data;Gavėjas;Paaiškinimai;Suma;Valiuta;D/K;Įrašo Nr.;Kodas
+acc-0000;10;2026-01-01;;balance;217.11;EUR;K;;AS
+acc-0000;20;2026-01-01;Spotify Example Stockholm;Card purchase Spotify Example Stockholm;8.99;EUR;D;2026010100000001;K
+acc-0000;20;2026-01-02;Maxima Example;Card purchase Maxima Example;12.40;EUR;D;2026010200000002;K
+acc-0000;20;2026-01-03;Example Employer;Salary;1500.00;EUR;K;2026010300000003;K
+acc-0000;86;2026-01-03;;closing balance;1695.72;EUR;K;;AS
