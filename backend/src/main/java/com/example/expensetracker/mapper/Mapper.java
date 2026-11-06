@@ -13,7 +13,7 @@ public final class Mapper {
     }
 
     public static CategoryResponse toResponse(Category c) {
-        return new CategoryResponse(c.getId(), c.getName(), c.getColor());
+        return new CategoryResponse(c.getId(), c.getName(), c.getColor(), c.getEmoji());
     }
 
     public static CategoryRuleResponse toResponse(CategoryRule r) {

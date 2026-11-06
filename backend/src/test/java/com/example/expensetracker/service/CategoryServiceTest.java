@@ -36,7 +36,7 @@ class CategoryServiceTest {
             return c;
         });
 
-        CategoryResponse result = service.create(new CategoryRequest("Groceries", "#22aa55"));
+        CategoryResponse result = service.create(new CategoryRequest("Groceries", "#22aa55", null));
 
         assertThat(result.id()).isEqualTo(1L);
         assertThat(result.name()).isEqualTo("Groceries");
@@ -46,7 +46,7 @@ class CategoryServiceTest {
     void createRejectsDuplicateName() {
         when(repo.existsByNameIgnoreCase("Groceries")).thenReturn(true);
 
-        assertThatThrownBy(() -> service.create(new CategoryRequest("Groceries", null)))
+        assertThatThrownBy(() -> service.create(new CategoryRequest("Groceries", null, null)))
                 .isInstanceOf(ConflictException.class);
         verify(repo, never()).save(any());
     }
@@ -55,7 +55,7 @@ class CategoryServiceTest {
     void updateMissingCategoryThrowsNotFound() {
         when(repo.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> service.update(99L, new CategoryRequest("X", null)))
+        assertThatThrownBy(() -> service.update(99L, new CategoryRequest("X", null, null)))
                 .isInstanceOf(NotFoundException.class);
     }
 
@@ -66,7 +66,7 @@ class CategoryServiceTest {
         existing.setName("Rent");
         when(repo.findById(1L)).thenReturn(Optional.of(existing));
 
-        CategoryResponse result = service.update(1L, new CategoryRequest("rent", "#000000"));
+        CategoryResponse result = service.update(1L, new CategoryRequest("rent", "#000000", null));
 
         assertThat(result.name()).isEqualTo("rent");
     }

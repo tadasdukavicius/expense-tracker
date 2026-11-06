@@ -30,7 +30,7 @@ class CategoryControllerTest {
 
     @Test
     void listReturnsCategories() throws Exception {
-        when(service.list()).thenReturn(List.of(new CategoryResponse(1L, "Groceries", "#22aa55")));
+        when(service.list()).thenReturn(List.of(new CategoryResponse(1L, "Groceries", "#22aa55", null)));
 
         mvc.perform(get("/api/categories"))
                 .andExpect(status().isOk())
@@ -39,7 +39,7 @@ class CategoryControllerTest {
 
     @Test
     void createReturns201() throws Exception {
-        when(service.create(any())).thenReturn(new CategoryResponse(1L, "Groceries", "#22aa55"));
+        when(service.create(any())).thenReturn(new CategoryResponse(1L, "Groceries", "#22aa55", null));
 
         mvc.perform(post("/api/categories")
                         .contentType(MediaType.APPLICATION_JSON)

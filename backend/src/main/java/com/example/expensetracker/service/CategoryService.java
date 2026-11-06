@@ -32,6 +32,7 @@ public class CategoryService {
         Category c = new Category();
         c.setName(r.name());
         c.setColor(r.color());
+        c.setEmoji(r.emoji());
         return Mapper.toResponse(repo.save(c));
     }
 
@@ -44,6 +45,7 @@ public class CategoryService {
         }
         c.setName(r.name());
         c.setColor(r.color());
+        c.setEmoji(r.emoji());
         return Mapper.toResponse(c);
     }
 
