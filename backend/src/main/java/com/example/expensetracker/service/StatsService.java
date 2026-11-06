@@ -35,7 +35,7 @@ public class StatsService {
                 .map(r -> new CategorySpend(
                         r.categoryId(),
                         r.categoryId() == null ? "Uncategorized" : r.name(),
-                        r.color() == null ? "#9e9e9e" : r.color(),
+                        r.color() == null ? "#b8b4a6" : r.color(),
                         r.emoji(),
                         r.amount(),
                         percent(r.amount(), total)))
