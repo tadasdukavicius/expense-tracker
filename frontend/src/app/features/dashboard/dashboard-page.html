@@ -1,0 +1,77 @@
+<main class="page">
+  <header>
+    <p class="eyebrow">Overview</p>
+    <h1>Dashboard</h1>
+    <p class="subtitle">Where your money went in the selected period.</p>
+  </header>
+
+  <form class="filters" [formGroup]="filters">
+    <mat-button-toggle-group formControlName="preset" aria-label="Time range" (change)="onPresetChange()">
+      @for (p of presets; track p.value) {
+        <mat-button-toggle [value]="p.value">{{ p.label }}</mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+
+    <div class="filter-row">
+    @if (filters.controls.preset.value === 'custom') {
+      <mat-form-field appearance="outline">
+        <mat-label>From</mat-label>
+        <input matInput type="date" formControlName="from" (change)="load()">
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>To</mat-label>
+        <input matInput type="date" formControlName="to" (change)="load()">
+      </mat-form-field>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Account</mat-label>
+      <mat-select formControlName="accountId" (selectionChange)="load()">
+        <mat-option [value]="null">All accounts</mat-option>
+        @for (account of accounts; track account.id) {
+          <mat-option [value]="account.id">{{ account.name }} ({{ account.currency }})</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    </div>
+  </form>
+
+  @if (errorMessage) {
+    <p class="error" role="alert">{{ errorMessage }}</p>
+  }
+
+  @if (stats; as s) {
+    @if (s.categories.length === 0) {
+      <p class="empty-state">No spending in this period.</p>
+    } @else {
+      <section class="summary">
+        <p class="total-label">Total spent</p>
+        <p class="total">{{ s.total | currency:currency:'symbol':'1.2-2' }}</p>
+      </section>
+
+      <section class="content">
+        <div class="chart">
+          <canvas baseChart type="doughnut" [data]="chartData" [options]="chartOptions"></canvas>
+        </div>
+
+        <table class="legend">
+          <thead>
+            <tr><th>Category</th><th class="num">Amount</th><th class="num">Share</th></tr>
+          </thead>
+          <tbody>
+            @for (c of s.categories; track c.categoryId ?? 'none') {
+              <tr>
+                <td>
+                  <span class="dot" [style.backgroundColor]="c.color"></span>
+                  {{ c.emoji }} {{ c.name }}
+                </td>
+                <td class="num">{{ c.amount | currency:currency:'symbol':'1.2-2' }}</td>
+                <td class="num">{{ c.percent | number:'1.1-1' }}%</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </section>
+    }
+  }
+</main>
