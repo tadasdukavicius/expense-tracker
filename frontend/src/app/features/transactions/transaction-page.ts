@@ -1,6 +1,7 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { finalize } from 'rxjs';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -36,6 +37,7 @@ export class TransactionsPage implements OnInit {
   private readonly transactionsApi = inject(TransactionService);
   private readonly categoriesApi = inject(CategoryService);
   private readonly accountsApi = inject(AccountService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   readonly filters = new FormGroup({
     from: new FormControl(''),
@@ -59,7 +61,7 @@ export class TransactionsPage implements OnInit {
 
   ngOnInit(): void {
     this.loadCategories();
-    this.accountsApi.list().subscribe({ next: (accounts) => (this.accounts = accounts) });
+    this.accountsApi.list().pipe(finalize(() => this.cdr.markForCheck())).subscribe({ next: (accounts) => (this.accounts = accounts) });
     this.loadTransactions();
   }
 
@@ -91,7 +93,7 @@ export class TransactionsPage implements OnInit {
   changeCategory(transaction: Transaction, categoryId: number | null): void {
     this.errorMessage = '';
 
-    this.transactionsApi.changeCategory(transaction.id, categoryId).subscribe({
+    this.transactionsApi.changeCategory(transaction.id, categoryId).pipe(finalize(() => this.cdr.markForCheck())).subscribe({
       next: (updated) => {
         this.transactions = this.transactions.map((item) =>
           item.id === updated.id ? updated : item,
@@ -104,7 +106,7 @@ export class TransactionsPage implements OnInit {
   }
 
   private loadCategories(): void {
-    this.categoriesApi.list().subscribe({
+    this.categoriesApi.list().pipe(finalize(() => this.cdr.markForCheck())).subscribe({
       next: (categories) => {
         this.categories = categories;
       },
@@ -128,7 +130,7 @@ export class TransactionsPage implements OnInit {
       page: this.pageIndex,
       size: this.pageSize,
       sort: this.sort,
-    }).subscribe({
+    }).pipe(finalize(() => this.cdr.markForCheck())).subscribe({
       next: (page) => {
         this.transactions = page.content;
         this.totalElements = page.totalElements;

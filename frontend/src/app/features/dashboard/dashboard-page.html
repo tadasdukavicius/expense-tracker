@@ -1,7 +1,6 @@
 <main class="page">
-  <header>
-    <p class="eyebrow">Overview</p>
-    <h1>Dashboard</h1>
+  <header class="page-header">
+    <h1>Overview</h1>
     <p class="subtitle">Where your money went in the selected period.</p>
   </header>
 
@@ -13,26 +12,26 @@
     </mat-button-toggle-group>
 
     <div class="filter-row">
-    @if (filters.controls.preset.value === 'custom') {
-      <mat-form-field appearance="outline">
-        <mat-label>From</mat-label>
-        <input matInput type="date" formControlName="from" (change)="load()">
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>To</mat-label>
-        <input matInput type="date" formControlName="to" (change)="load()">
-      </mat-form-field>
-    }
+      @if (filters.controls.preset.value === 'custom') {
+        <mat-form-field appearance="outline">
+          <mat-label>From</mat-label>
+          <input matInput type="date" formControlName="from" (change)="load()">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>To</mat-label>
+          <input matInput type="date" formControlName="to" (change)="load()">
+        </mat-form-field>
+      }
 
-    <mat-form-field appearance="outline">
-      <mat-label>Account</mat-label>
-      <mat-select formControlName="accountId" (selectionChange)="load()">
-        <mat-option [value]="null">All accounts</mat-option>
-        @for (account of accounts; track account.id) {
-          <mat-option [value]="account.id">{{ account.name }} ({{ account.currency }})</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Account</mat-label>
+        <mat-select formControlName="accountId" (selectionChange)="load()">
+          <mat-option [value]="null">All accounts</mat-option>
+          @for (account of accounts; track account.id) {
+            <mat-option [value]="account.id">{{ account.name }} ({{ account.currency }})</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
     </div>
   </form>
 
@@ -42,35 +41,60 @@
 
   @if (stats; as s) {
     @if (s.categories.length === 0) {
-      <p class="empty-state">No spending in this period.</p>
+      <p class="empty-state">No spending in this period. Try a wider range or import a statement.</p>
     } @else {
-      <section class="summary">
-        <p class="total-label">Total spent</p>
-        <p class="total">{{ s.total | currency:currency:'symbol':'1.2-2' }}</p>
+      <section class="cards" aria-label="Summary">
+        <div class="card metric">
+          <span class="label">Total spent</span>
+          <strong class="money">{{ s.total | currency:currency:'symbol':'1.2-2' }}</strong>
+        </div>
+        <div class="card metric">
+          <span class="label">Top category</span>
+          <strong>{{ topCategory?.emoji }} {{ topCategory?.name ?? '—' }}</strong>
+          @if (topCategory; as top) {
+            <span class="money muted">{{ top.amount | currency:currency:'symbol':'1.2-2' }}</span>
+          }
+        </div>
+        <div class="card metric">
+          <span class="label">Uncategorized</span>
+          <strong class="money">{{ uncategorizedPercent | number:'1.1-1' }}%</strong>
+          <span class="muted">of spending</span>
+        </div>
       </section>
 
       <section class="content">
-        <div class="chart">
-          <canvas baseChart type="doughnut" [data]="chartData" [options]="chartOptions"></canvas>
+        <div class="card chart">
+          <div class="chart-wrap">
+            <canvas baseChart type="doughnut" [data]="chartData" [options]="chartOptions"
+              role="img" [attr.aria-label]="chartSummary"></canvas>
+            <div class="chart-center" aria-hidden="true">
+              <span class="label">Total</span>
+              <strong class="money">{{ s.total | currency:currency:'symbol':'1.0-0' }}</strong>
+            </div>
+          </div>
         </div>
 
-        <table class="legend">
-          <thead>
-            <tr><th>Category</th><th class="num">Amount</th><th class="num">Share</th></tr>
-          </thead>
-          <tbody>
-            @for (c of s.categories; track c.categoryId ?? 'none') {
-              <tr>
-                <td>
-                  <span class="dot" [style.backgroundColor]="c.color"></span>
-                  {{ c.emoji }} {{ c.name }}
-                </td>
-                <td class="num">{{ c.amount | currency:currency:'symbol':'1.2-2' }}</td>
-                <td class="num">{{ c.percent | number:'1.1-1' }}%</td>
-              </tr>
-            }
-          </tbody>
-        </table>
+        <div class="card legend-card">
+          <table class="legend">
+            <caption class="visually-hidden">Spending by category</caption>
+            <thead>
+              <tr><th>Category</th><th class="num">Amount</th><th class="num">Share</th></tr>
+            </thead>
+            <tbody>
+              @for (c of s.categories; track c.categoryId ?? 'none') {
+                <tr>
+                  <td>
+                    <span class="dot" [style.background]="c.color" aria-hidden="true"></span>
+                    @if (c.emoji) { <span class="emoji" aria-hidden="true">{{ c.emoji }}</span> }
+                    {{ c.name }}
+                  </td>
+                  <td class="num money">{{ c.amount | currency:currency:'symbol':'1.2-2' }}</td>
+                  <td class="num money">{{ c.percent | number:'1.1-1' }}%</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       </section>
     }
   }

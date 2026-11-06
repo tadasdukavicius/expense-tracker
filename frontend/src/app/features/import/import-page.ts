@@ -1,6 +1,7 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, ViewChild, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, inject } from '@angular/core';
+import { finalize } from 'rxjs';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -30,6 +31,7 @@ import { ImportService } from '../../core/services/import.service';
 export class ImportPage implements OnInit {
   private readonly accountsApi = inject(AccountService);
   private readonly importsApi = inject(ImportService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   @ViewChild(MatStepper) private stepper?: MatStepper;
 
@@ -75,7 +77,7 @@ export class ImportPage implements OnInit {
     this.creatingAccount = true;
     this.errorMessage = '';
 
-    this.accountsApi.create({ name: name.trim(), currency: currency.toUpperCase() }).subscribe({
+    this.accountsApi.create({ name: name.trim(), currency: currency.toUpperCase() }).pipe(finalize(() => this.cdr.markForCheck())).subscribe({
       next: (account) => {
         this.accounts = [...this.accounts, account];
         this.accountForm.controls.accountId.setValue(account.id);
@@ -98,7 +100,7 @@ export class ImportPage implements OnInit {
     this.preview = null;
     this.result = null;
 
-    this.importsApi.preview(this.accountForm.controls.accountId.value!, this.selectedFile).subscribe({
+    this.importsApi.preview(this.accountForm.controls.accountId.value!, this.selectedFile).pipe(finalize(() => this.cdr.markForCheck())).subscribe({
       next: (preview) => {
         this.preview = preview;
         this.uploading = false;
@@ -117,7 +119,7 @@ export class ImportPage implements OnInit {
     this.confirming = true;
     this.errorMessage = '';
 
-    this.importsApi.confirm(this.preview.batchId).subscribe({
+    this.importsApi.confirm(this.preview.batchId).pipe(finalize(() => this.cdr.markForCheck())).subscribe({
       next: (result) => {
         this.result = result;
         this.confirming = false;
@@ -140,7 +142,7 @@ export class ImportPage implements OnInit {
 
   private loadAccounts(): void {
     this.loadingAccounts = true;
-    this.accountsApi.list().subscribe({
+    this.accountsApi.list().pipe(finalize(() => this.cdr.markForCheck())).subscribe({
       next: (accounts) => {
         this.accounts = accounts;
         this.loadingAccounts = false;

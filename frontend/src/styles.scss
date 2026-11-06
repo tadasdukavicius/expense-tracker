@@ -1,39 +1,179 @@
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
+
+// Ledger design tokens. Components read these instead of hard-coding values.
+:root {
+  --color-bg: #f7f5ef;
+  --color-surface: #fbfaf6;
+  --color-text: #22251f;
+  --color-text-muted: #5f6258;
+  --color-border: #ddd8ca;
+  --color-border-strong: #c4bead;
+  --color-primary: #315c45;
+  --color-primary-hover: #284d3a;
+  --color-primary-contrast: #ffffff;
+  --color-primary-soft: #e4ebe2;
+  --color-clay: #a5553a;
+  --color-clay-soft: #f1e0d6;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  --radius: 2px;
+  --border: 1px solid var(--color-border);
+
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
+}
 
 html {
   height: 100%;
   @include mat.theme(
     (
       color: (
-        primary: mat.$magenta-palette,
-        tertiary: mat.$violet-palette,
+        primary: mat.$green-palette,
+        tertiary: mat.$orange-palette,
       ),
-      typography: Roboto,
+      typography: (
+        plain-family: 'system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif',
+        brand-family: 'Iowan Old Style, Palatino Linotype, Palatino, Georgia, serif',
+        bold-weight: 700,
+        medium-weight: 600,
+        regular-weight: 400,
+      ),
       density: 0,
     )
   );
+
+  // Pin Material's system tokens to the Ledger palette and flatten its shapes.
+  --mat-sys-primary: var(--color-primary);
+  --mat-sys-on-primary: var(--color-primary-contrast);
+  --mat-sys-surface: var(--color-bg);
+  --mat-sys-background: var(--color-bg);
+  --mat-sys-on-surface: var(--color-text);
+  --mat-sys-on-surface-variant: var(--color-text-muted);
+  --mat-sys-surface-container: var(--color-surface);
+  --mat-sys-surface-container-low: var(--color-surface);
+  --mat-sys-surface-container-high: var(--color-surface);
+  --mat-sys-surface-container-highest: var(--color-primary-soft);
+  --mat-sys-secondary-container: var(--color-primary-soft);
+  --mat-sys-on-secondary-container: var(--color-text);
+  --mat-sys-outline: var(--color-border-strong);
+  --mat-sys-outline-variant: var(--color-border);
+  --mat-sys-corner-extra-small: var(--radius);
+  --mat-sys-corner-small: var(--radius);
+  --mat-sys-corner-medium: var(--radius);
+  --mat-sys-corner-large: var(--radius);
+  --mat-sys-corner-extra-large: var(--radius);
+  --mat-sys-corner-full: var(--radius);
 }
 
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
   color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
   margin: 0;
   height: 100%;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  line-height: 1.5;
 }
-/* You can add global styles to this file, and also import other style files */
+
+h1,
+h2 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+h1 {
+  font-size: clamp(1.9rem, 4vw, 2.6rem);
+}
+
+h2 {
+  font-size: 1.35rem;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+// Shared page structure
+.page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-6) var(--space-7);
+}
+
+.page-header {
+  margin-bottom: var(--space-5);
+}
+
+.subtitle {
+  margin: var(--space-2) 0 0;
+  color: var(--color-text-muted);
+}
+
+.card {
+  border: var(--border);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  padding: var(--space-5);
+}
+
+.card h2 {
+  margin-bottom: var(--space-4);
+}
+
+.money {
+  font-variant-numeric: tabular-nums;
+}
+
+.empty-state {
+  padding: var(--space-6);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.error {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-clay);
+  border-radius: var(--radius);
+  background: var(--color-clay-soft);
+  color: var(--color-clay);
+}
+
+.expense {
+  color: var(--color-clay);
+}
+
+.income {
+  color: var(--color-primary);
+}
+
+@media (max-width: 560px) {
+  .page {
+    padding: var(--space-5) var(--space-4) var(--space-6);
+  }
+
+  .card {
+    padding: var(--space-4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

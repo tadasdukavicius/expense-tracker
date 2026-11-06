@@ -1,11 +1,11 @@
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { Component, inject, signal } from '@angular/core';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { AppErrorService } from './core/services/app-error.service';
 import { HttpActivityService } from './core/services/http-activity.service';
 
 @Component({
-  imports: [RouterLink, RouterOutlet, MatProgressBarModule],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, MatProgressBarModule],
   selector: 'app-root',
   styleUrl: './app.scss',
   templateUrl: './app.html',

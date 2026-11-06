@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ChartConfiguration } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
-import { Account, CategoryStats } from '../../core/models/api.models';
+import { Account, CategorySpend, CategoryStats } from '../../core/models/api.models';
 import { AccountService } from '../../core/services/account.service';
 import { StatsService } from '../../core/services/stats.service';
 import { RangePreset, presetRange } from './date-range';
@@ -56,11 +56,27 @@ export class DashboardPage implements OnInit {
   readonly chartOptions: ChartConfiguration<'doughnut'>['options'] = {
     responsive: true,
     maintainAspectRatio: true,
+    cutout: '62%',
+    animation: matchMedia('(prefers-reduced-motion: reduce)').matches ? false : undefined,
     plugins: { legend: { display: false } },
   };
   currency = 'EUR';
   loading = false;
   errorMessage = '';
+
+  get topCategory(): CategorySpend | null {
+    return this.stats?.categories.find((c) => c.categoryId !== null) ?? null;
+  }
+
+  get uncategorizedPercent(): number {
+    return this.stats?.categories.find((c) => c.categoryId === null)?.percent ?? 0;
+  }
+
+  get chartSummary(): string {
+    if (!this.stats || this.stats.categories.length === 0) return 'No spending in this period.';
+    const parts = this.stats.categories.map((c) => `${c.name} ${c.percent.toFixed(1)}%`);
+    return `Spending by category: ${parts.join(', ')}.`;
+  }
 
   ngOnInit(): void {
     this.accountsApi.list().subscribe({
